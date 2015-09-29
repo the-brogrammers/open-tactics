@@ -12,5 +12,22 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->welcome();
+    return 'OT';
+    //return $app->welcome();
+});
+
+function rest($path, $controller)
+{
+	global $app;
+	
+	$app->get($path, $controller.'@index');
+	$app->get($path.'/{id}', $controller.'@show');
+	$app->post($path, $controller.'@store');
+	$app->put($path.'/{id}', $controller.'@update');
+	$app->delete($path.'/{id}', $controller.'@destroy');
+}
+
+$app->group(['prefix' => 'api/v1', 'namespace' => 'App\Http\Controllers'], function($app)
+{
+	rest('/users', 'UserController');
 });

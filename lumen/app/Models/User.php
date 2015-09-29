@@ -1,9 +1,10 @@
-<?php namespace App;
+<?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends {
+class User extends Model {
 
+	//bin2hex(openssl_random_pseudo_bytes(16));
 	//function __construct($attributes = array()) {
 		//parent::__construct($attributes);
 	//}
