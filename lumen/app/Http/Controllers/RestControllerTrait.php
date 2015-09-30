@@ -18,6 +18,7 @@ trait RestControllerTrait
         }
         return $this->notFoundResponse();
     }
+
     public function store(Request $request)
     {
         $m = self::MODEL;
@@ -32,11 +33,12 @@ trait RestControllerTrait
             return $this->createdResponse($data);
         }catch(\Exception $ex)
         {
-            $data = ['form_validations' => $v->errors(), 'exception' => $ex->getMessage()];
+            //$data = ['form_validations' => $v->errors(), 'exception' => $ex->getMessage()];
+            $data = ['form_validations' => $v->errors()];
             return $this->clientErrorResponse($data);
         }
-        
     }
+
     public function update($id)
     {
     	$m = self::MODEL;
@@ -60,6 +62,7 @@ trait RestControllerTrait
             return $this->clientErrorResponse($data);
         }
     }
+
     public function destroy($id)
     {
         $m = self::MODEL;
@@ -70,6 +73,7 @@ trait RestControllerTrait
         $data->delete();
         return $this->deletedResponse();
     }
+
     protected function createdResponse($data)
     {
         $response = [
@@ -79,6 +83,7 @@ trait RestControllerTrait
         ];
         return response()->json($response, $response['code']);
     }
+
     protected function showResponse($data)
     {
         $response = [
@@ -88,6 +93,7 @@ trait RestControllerTrait
         ];
         return response()->json($response, $response['code']);
     }
+
     protected function listResponse($data)
     {
         $response = [
@@ -97,6 +103,7 @@ trait RestControllerTrait
         ];
         return response()->json($response, $response['code']);
     }
+
     protected function notFoundResponse()
     {
         $response = [
@@ -107,6 +114,7 @@ trait RestControllerTrait
         ];
         return response()->json($response, $response['code']);
     }
+
     protected function deletedResponse()
     {
         $response = [
@@ -117,6 +125,7 @@ trait RestControllerTrait
         ];
         return response()->json($response, $response['code']);
     }
+
     protected function clientErrorResponse($data)
     {
         $response = [
