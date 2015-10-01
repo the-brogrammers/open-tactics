@@ -63,9 +63,9 @@ $app->singleton(
 //     // Laravel\Lumen\Http\Middleware\VerifyCsrfToken::class,
 // ]);
 
-// $app->routeMiddleware([
-
-// ]);
+$app->routeMiddleware([
+	'logged_in' => 'App\Http\Middleware\LoggedIn',
+]);
 
 /*
 |--------------------------------------------------------------------------

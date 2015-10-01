@@ -18,7 +18,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 		parent::boot();
 
 		static::creating(function ($user) {
-			$user->api_token = bin2hex(openssl_random_pseudo_bytes(16));
 			$user->password = bcrypt($user->password);
 			return true;
 		});
@@ -45,4 +44,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 	 */
 	protected $hidden = ['password', 'remember_token'];
 
+	function generate_api_token()
+	{
+		app()->configure('user');
+		$token = [
+			'token' => bin2hex(openssl_random_pseudo_bytes(16)),
+			'token_expires_at' => \Carbon\Carbon::now()->addMinutes(config('user.token_duration')),
+		];
+		return $token;
+	}
+
+	public function players()
+	{
+		return $this->hasMany('App\Models\Player');
+	}
 }

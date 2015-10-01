@@ -10,6 +10,11 @@ class UserController extends Controller {
 
     const MODEL = 'App\Models\User';
 
+	public function __construct()
+	{
+		$this->middleware('logged_in', ['except' => ['store', 'login']]);
+	}
+
 	//validation rules are only used for store/update requests
     protected $validationRules = ['name' => 'required', 'email' => 'required'];
 
@@ -30,8 +35,11 @@ class UserController extends Controller {
 		if (\Auth::attempt($credentials)) {
 			$user = \Auth::user();
 			$user->last_login = \Carbon\Carbon::now();
+			$api_token = $user->generate_api_token();
+			$user->api_token = $api_token['token'];
+			$user->token_expires_at = $api_token['token_expires_at'];
 			$user->save();
-			return $this->showResponse(array('token' => $user->api_token));
+			return $this->showResponse(array('token' => $user->api_token, 'token_expires_at' => $user->token_expires_at->toW3cString()));
 		}
 
 		return $this->notFoundResponse();

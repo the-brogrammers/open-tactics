@@ -36,4 +36,7 @@ $app->group(['prefix' => 'api/v1', 'namespace' => 'App\Http\Controllers'], funct
 {
 	rest('/users', 'UserController');
 	$app->post('/users/login', 'UserController@login');
+	rest('/games', 'GameController');
+	rest('/players', 'PlayerController');
+	rest('/maps', 'MapController');
 });
