@@ -24,7 +24,7 @@ class Player extends BaseModel {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['color'];
+	protected $fillable = ['color', 'user_id'];
 
 	public function games()
 	{

@@ -7,14 +7,14 @@ trait RestControllerTrait
 	public function index()
     {
         $m = self::MODEL;
-        return $this->listResponse($m::all());
+		return $this->sendSuccessResponse($m::all());
     }
     public function show($id)
     {
         $m = self::MODEL;
     	if($data = $m::find($id))
         {
-            return $this->showResponse($data);
+			return $this->sendSuccessResponse($data);
         }
         return $this->notFoundResponse();
     }
@@ -55,7 +55,7 @@ trait RestControllerTrait
             }
             $data->fill(\Request::all());
             $data->save();
-            return $this->showResponse($data);
+			return $this->sendSuccessResponse($data);
         }catch(\Exception $ex)
         {
             $data = ['form_validations' => $v->errors(), 'exception' => $ex->getMessage()];
@@ -66,7 +66,7 @@ trait RestControllerTrait
     public function destroy($id)
     {
         $m = self::MODEL;
-    	if(!$data = $m::find($id))
+    	if (!$data = $m::find($id))
         {
             return $this->notFoundResponse();   
         }
@@ -76,64 +76,44 @@ trait RestControllerTrait
 
     protected function createdResponse($data)
     {
-        $response = [
-        'code' => 201,
-        'status' => 'success',
-        'data' => $data
-        ];
-        return response()->json($response, $response['code']);
-    }
-
-    protected function showResponse($data)
-    {
-        $response = [
-        'code' => 200,
-        'status' => 'success',
-        'data' => $data
-        ];
-        return response()->json($response, $response['code']);
-    }
-
-    protected function listResponse($data)
-    {
-        $response = [
-        'code' => 200,
-        'status' => 'success',
-        'data' => $data
-        ];
-        return response()->json($response, $response['code']);
+		return $this->sendSuccessResponse($data, 201);
     }
 
     protected function notFoundResponse()
     {
-        $response = [
-        'code' => 404,
-        'status' => 'error',
-        'data' => 'Resource Not Found',
-        'message' => 'Not Found'
-        ];
-        return response()->json($response, $response['code']);
+		return $this->sendErrorResponse([], 404);
     }
 
     protected function deletedResponse()
     {
-        $response = [
-        'code' => 204,
-        'status' => 'success',
-        'data' => [],
-        'message' => 'Resource deleted'
-        ];
-        return response()->json($response, $response['code']);
+		return $this->sendSuccessResponse([], 204);
     }
 
     protected function clientErrorResponse($data)
     {
-        $response = [
-        'code' => 422,
-        'status' => 'error',
-        'data' => $data,
-        'message' => 'Unprocessable entity'
-        ];
-        return response()->json($response, $response['code']);
+		return $this->sendErrorResponse($data, 422);
     }
+
+	protected function sendSuccessResponse($data, $code=200, $message=null) {
+		$response = [
+			'status' => 'success',
+			'data' => $data
+		];
+		return $this->sendResponse($response, $code, $message);
+	}
+
+	protected function sendErrorResponse($data, $code, $message=null) {
+		$response = [
+			'status' => 'error',
+			'data' => $data
+		];
+		return $this->sendResponse($response, $code, $message);
+	}
+
+	protected function sendResponse($data, $code, $message=null) {
+		if ($message) {
+			$data['message'] = $message;
+		}
+        return response()->json($data, $code);
+	}
 }

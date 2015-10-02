@@ -17,4 +17,20 @@ class GameController extends Controller {
 
 	//validation rules are only used for store/update requests
 	protected $validationRules = ['name' => 'required', 'max_players' => 'required', 'map_id' => 'required'];
+
+	public function join($id)
+	{
+		$game = Game::with('players')->find($id);
+		if ($game) {
+			if ($game->is_joinable()) {
+				$player = new \App\Models\Player(['user_id' => app()->current_user->id]);
+				$game->players()->save($player, ['joined_at' => \Carbon\Carbon::now()]);
+				return $this->sendSuccessResponse(['game' => $game]);
+			}
+			else {
+				return $this->sendErrorResponse($game, 520, 'game is full');
+			}
+		}
+		return $this->notFoundResponse();
+	}
 }

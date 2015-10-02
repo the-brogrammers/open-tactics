@@ -35,4 +35,19 @@ class Game extends BaseModel {
 	{
 		return $this->belongsTo('App\Models\Map');
 	}
+
+	function is_joinable()
+	{
+		return (($this->players()->count() < $this->max_players) && !$this->contains_current_user());
+	}
+
+	function contains_current_user()
+	{
+		foreach ($this->players as $player) {
+			if ($player->user_id == app()->current_user->id) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

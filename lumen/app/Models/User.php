@@ -10,6 +10,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
 	use Authenticatable, CanResetPassword;
 
+	protected $dates = ['token_expires_at'];
+
 	//function __construct($attributes = array()) {
 		//parent::__construct($attributes);
 	//}
@@ -52,6 +54,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 			'token_expires_at' => \Carbon\Carbon::now()->addMinutes(config('user.token_duration')),
 		];
 		return $token;
+	}
+
+	//extend token validity
+	function refresh_token()
+	{
+		app()->configure('user');
+		$this->token_expires_at = \Carbon\Carbon::now()->addMinutes(config('user.token_duration'));
+		$this->save();
+	}
+
+	function token_is_valid()
+	{
+		return ($this->token_expires_at >= \Carbon\Carbon::now());
 	}
 
 	public function players()
